@@ -29,6 +29,8 @@ export interface Translation {
   interests: Record<Interest, string>;
   rolesLabel: string;
   selectAll: string;
+  interestsOtherLabel: string;
+  rolesOtherLabel: string;
   stepOf: string;
   continueCta: string;
   backCta: string;
@@ -48,6 +50,8 @@ export interface Translation {
   errPhoneInvalid: string;
   errInterestsRequired: string;
   errRolesRequired: string;
+  errInterestsOtherRequired: string;
+  errRolesOtherRequired: string;
   errRateLimit: string;
   errGeneric: string;
   errNetwork: string;
@@ -85,6 +89,8 @@ const TRANSLATIONS: Record<LanguageCode, Translation> = {
     },
     rolesLabel: "Which best describes you?",
     selectAll: "Select all that apply.",
+    interestsOtherLabel: "Tell us what else you'd like to do",
+    rolesOtherLabel: "Tell us how you'd describe yourself",
     stepOf: "Step {current} of {total}",
     continueCta: "Continue",
     backCta: "Back",
@@ -112,6 +118,8 @@ const TRANSLATIONS: Record<LanguageCode, Translation> = {
     errPhoneInvalid: "Please enter a valid phone number for the selected country",
     errInterestsRequired: "Please select at least one thing you're interested in",
     errRolesRequired: "Please select at least one option that describes you",
+    errInterestsOtherRequired: "Please tell us what else you're interested in",
+    errRolesOtherRequired: "Please tell us how you'd describe yourself",
     errRateLimit: "Too many attempts. Please try again in a minute.",
     errGeneric: "Something went wrong. Please try again.",
     errNetwork: "Network error. Check your connection and try again.",
@@ -147,6 +155,8 @@ const TRANSLATIONS: Record<LanguageCode, Translation> = {
     },
     rolesLabel: "እርስዎን በተሻለ የሚገልጸው የትኛው ነው?",
     selectAll: "የሚመለከቱዎትን ሁሉ ይምረጡ።",
+    interestsOtherLabel: "ሌላ ምን ማድረግ እንደሚፈልጉ ይንገሩን",
+    rolesOtherLabel: "ራስዎን እንዴት እንደሚገልጹ ይንገሩን",
     stepOf: "ደረጃ {current} ከ {total}",
     continueCta: "ቀጥል",
     backCta: "ተመለስ",
@@ -174,6 +184,8 @@ const TRANSLATIONS: Record<LanguageCode, Translation> = {
     errPhoneInvalid: "እባክዎ ለተመረጠው አገር ትክክለኛ ስልክ ቁጥር ያስገቡ",
     errInterestsRequired: "እባክዎ የሚፈልጉትን ቢያንስ አንድ ነገር ይምረጡ",
     errRolesRequired: "እባክዎ እርስዎን የሚገልጽ ቢያንስ አንድ አማራጭ ይምረጡ",
+    errInterestsOtherRequired: "እባክዎ ሌላ ምን ማድረግ እንደሚፈልጉ ይጻፉ",
+    errRolesOtherRequired: "እባክዎ ራስዎን እንዴት እንደሚገልጹ ይጻፉ",
     errRateLimit: "በጣም ብዙ ሙከራዎች። እባክዎ ከአንድ ደቂቃ በኋላ ይሞክሩ።",
     errGeneric: "የሆነ ችግር ተፈጥሯል። እባክዎ እንደገና ይሞክሩ።",
     errNetwork: "የኔትወርክ ችግር። ግንኙነትዎን አረጋግጠው እንደገና ይሞክሩ።",

@@ -13,7 +13,9 @@ export const waitlist = mysqlTable(
     country: varchar("country", { length: 2 }).notNull(),
     language: varchar("language", { length: 8 }).notNull().default("en"),
     interests: varchar("interests", { length: 200 }).notNull().default(""),
+    interestsOther: varchar("interests_other", { length: 200 }).notNull().default(""),
     roles: varchar("roles", { length: 160 }).notNull().default(""),
+    rolesOther: varchar("roles_other", { length: 200 }).notNull().default(""),
     createdAt: datetime("created_at", { mode: "date", fsp: 3 })
       .notNull()
       .default(sql`CURRENT_TIMESTAMP(3)`)

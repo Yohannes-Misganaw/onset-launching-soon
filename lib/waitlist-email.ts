@@ -110,7 +110,7 @@ export function buildWaitlistConfirmation(name: string, language: LanguageCode) 
       <table role="presentation" width="600" cellpadding="0" cellspacing="0" border="0" dir="${dir}" style="width:100%; max-width:600px; background:#08271e;">
         <tr>
           <td style="padding:0; font-size:0; line-height:0;">
-            <a href="${url}"><img src="${url}/email/hero.jpg" width="600" alt="Onset" style="display:block; width:100%; max-width:600px; height:auto; border:0;"></a>
+            <a href="${url}"><img src="${url}/email/onset-header.jpg" width="600" alt="Onset" style="display:block; width:100%; max-width:600px; height:auto; border:0;"></a>
           </td>
         </tr>
         <tr>

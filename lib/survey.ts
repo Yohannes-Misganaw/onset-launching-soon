@@ -52,9 +52,12 @@ export function parseChoices<T extends string>(value: unknown, allowed: readonly
   return allowed.filter((item) => value.includes(item));
 }
 
-export function storedChoiceLabels<T extends string>(stored: string, labels: Record<T, string>): string[] {
-  return stored
-    .split(",")
-    .filter((item): item is T => Object.hasOwn(labels, item))
-    .map((item) => labels[item]);
+export const OTHER_TEXT_MAX = 200;
+
+export function parseOtherText(choices: readonly string[], value: unknown): string | null {
+  if (!choices.includes("other")) return "";
+  if (typeof value !== "string") return null;
+  const text = value.trim().replace(/\s+/g, " ");
+  if (!text || text.length > OTHER_TEXT_MAX) return null;
+  return text;
 }

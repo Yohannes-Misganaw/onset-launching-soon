@@ -12,7 +12,7 @@ import { FilmGrain } from "@/components/film-grain";
 import { AlertCircleIcon, ArrowLeftIcon, ArrowRightIcon, CheckIcon } from "@/components/icons";
 import { DEFAULT_COUNTRY_ISO, toE164Phone } from "@/lib/countries";
 import { useLanguage, type Translation } from "@/lib/i18n";
-import { AUDIENCE_ROLES, INTERESTS } from "@/lib/survey";
+import { AUDIENCE_ROLES, INTERESTS, OTHER_TEXT_MAX } from "@/lib/survey";
 
 const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const STEP_COUNT = 3;
@@ -27,6 +27,8 @@ type ErrorKey = Extract<
   | "errPhoneInvalid"
   | "errInterestsRequired"
   | "errRolesRequired"
+  | "errInterestsOtherRequired"
+  | "errRolesOtherRequired"
   | "errRateLimit"
   | "errGeneric"
   | "errNetwork"
@@ -38,6 +40,8 @@ function errorForResponse(status: number, field: unknown): ErrorKey {
   if (status === 400 && field === "email") return "errEmailInvalid";
   if (status === 400 && field === "interests") return "errInterestsRequired";
   if (status === 400 && field === "roles") return "errRolesRequired";
+  if (status === 400 && field === "interestsOther") return "errInterestsOtherRequired";
+  if (status === 400 && field === "rolesOther") return "errRolesOtherRequired";
   if (status === 429) return "errRateLimit";
   return "errGeneric";
 }
@@ -50,6 +54,8 @@ const ERROR_STEP: Partial<Record<ErrorKey, number>> = {
   errPhoneInvalid: 0,
   errInterestsRequired: 1,
   errRolesRequired: 2,
+  errInterestsOtherRequired: 1,
+  errRolesOtherRequired: 2,
 };
 
 const FIELD_LABEL =
@@ -65,13 +71,37 @@ interface ChoiceGroupProps {
   options: readonly string[];
   labels: Record<string, string>;
   invalid: boolean;
+  otherName: string;
+  otherLabel: string;
+  otherInvalid: boolean;
   disabled: boolean;
   errorId: string;
   onChange: () => void;
 }
 
-function ChoiceGroup({ name, legend, hint, options, labels, invalid, disabled, errorId, onChange }: ChoiceGroupProps) {
+function ChoiceGroup({
+  name,
+  legend,
+  hint,
+  options,
+  labels,
+  invalid,
+  otherName,
+  otherLabel,
+  otherInvalid,
+  disabled,
+  errorId,
+  onChange,
+}: ChoiceGroupProps) {
   const hintId = useId();
+  const otherId = useId();
+  const otherRef = useRef<HTMLInputElement>(null);
+  const [otherChecked, setOtherChecked] = useState(false);
+
+  useEffect(() => {
+    if (otherChecked) otherRef.current?.focus({ preventScroll: true });
+  }, [otherChecked]);
+
   return (
     <fieldset
       aria-describedby={invalid ? `${hintId} ${errorId}` : hintId}
@@ -93,7 +123,10 @@ function ChoiceGroup({ name, legend, hint, options, labels, invalid, disabled, e
               name={name}
               value={option}
               disabled={disabled}
-              onChange={onChange}
+              onChange={(event) => {
+                if (option === "other") setOtherChecked(event.currentTarget.checked);
+                onChange();
+              }}
               className="peer sr-only"
             />
             <span
@@ -106,6 +139,25 @@ function ChoiceGroup({ name, legend, hint, options, labels, invalid, disabled, e
           </label>
         ))}
       </div>
+      {otherChecked ? (
+        <div className="mt-3 animate-in fade-in slide-in-from-top-1 duration-200">
+          <Label htmlFor={otherId} className={FIELD_LABEL}>
+            {otherLabel}
+          </Label>
+          <Input
+            ref={otherRef}
+            id={otherId}
+            name={otherName}
+            type="text"
+            maxLength={OTHER_TEXT_MAX}
+            disabled={disabled}
+            aria-invalid={otherInvalid ? true : undefined}
+            aria-describedby={otherInvalid ? errorId : undefined}
+            onChange={onChange}
+            className={`${FIELD_INPUT} h-12`}
+          />
+        </div>
+      ) : null}
     </fieldset>
   );
 }
@@ -132,6 +184,8 @@ export default function WaitlistForm() {
   const phoneError = error === "errPhoneRequired" || error === "errPhoneInvalid";
   const interestsError = error === "errInterestsRequired";
   const rolesError = error === "errRolesRequired";
+  const interestsOtherError = error === "errInterestsOtherRequired";
+  const rolesOtherError = error === "errRolesOtherRequired";
   const phonePlaceholder = useMemo(
     () => getExampleNumber(country, phoneExamples)?.formatNational() ?? t.phonePlaceholder,
     [country, t.phonePlaceholder],
@@ -182,6 +236,8 @@ export default function WaitlistForm() {
     const phone = String(formData.get("phone") ?? "").trim();
     const interests = formData.getAll("interests").map(String);
     const roles = formData.getAll("roles").map(String);
+    const interestsOther = String(formData.get("interestsOther") ?? "").trim();
+    const rolesOther = String(formData.get("rolesOther") ?? "").trim();
 
     const stepErrors: (ErrorKey | null)[] = [
       !name
@@ -195,8 +251,16 @@ export default function WaitlistForm() {
               : !toE164Phone(phone, country)
                 ? "errPhoneInvalid"
                 : null,
-      interests.length === 0 ? "errInterestsRequired" : null,
-      roles.length === 0 ? "errRolesRequired" : null,
+      interests.length === 0
+        ? "errInterestsRequired"
+        : interests.includes("other") && !interestsOther
+          ? "errInterestsOtherRequired"
+          : null,
+      roles.length === 0
+        ? "errRolesRequired"
+        : roles.includes("other") && !rolesOther
+          ? "errRolesOtherRequired"
+          : null,
     ];
 
     const currentError = stepErrors[step];
@@ -218,7 +282,17 @@ export default function WaitlistForm() {
       const response = await fetch("/api/submit", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name, email, phone, country, language, interests, roles }),
+        body: JSON.stringify({
+          name,
+          email,
+          phone,
+          country,
+          language,
+          interests,
+          interestsOther,
+          roles,
+          rolesOther,
+        }),
       });
       const result: { field?: unknown } = await response.json().catch(() => ({}));
 
@@ -398,6 +472,9 @@ export default function WaitlistForm() {
                     options={INTERESTS}
                     labels={t.interests}
                     invalid={interestsError}
+                    otherName="interestsOther"
+                    otherLabel={t.interestsOtherLabel}
+                    otherInvalid={interestsOtherError}
                     disabled={isSubmitting}
                     errorId={errorId}
                     onChange={clearError}
@@ -419,6 +496,9 @@ export default function WaitlistForm() {
                     options={AUDIENCE_ROLES}
                     labels={t.roles}
                     invalid={rolesError}
+                    otherName="rolesOther"
+                    otherLabel={t.rolesOtherLabel}
+                    otherInvalid={rolesOtherError}
                     disabled={isSubmitting}
                     errorId={errorId}
                     onChange={clearError}

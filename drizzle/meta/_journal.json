@@ -15,6 +15,13 @@
       "when": 1795552345832,
       "tag": "0001_add_survey_answers",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "5",
+      "when": 1795555888430,
+      "tag": "0002_add_other_answers",
+      "breakpoints": true
     }
   ]
 }
