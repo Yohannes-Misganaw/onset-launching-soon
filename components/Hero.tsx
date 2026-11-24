@@ -63,7 +63,7 @@ export default function Hero() {
               {t.kicker}
             </p>
 
-            <h1 className="hero-headline reveal reveal-2 mt-4 font-satoshi text-[clamp(3.25rem,13vw,4.25rem)] leading-[0.98] tracking-[-0.035em] sm:mt-5 md:text-[clamp(3.5rem,6.2vw,5.25rem)]">
+            <h1 className="hero-headline reveal reveal-2 mt-4 font-satoshi text-[clamp(3.25rem,13vw,4.25rem)] leading-[1.08] tracking-[-0.035em] sm:mt-5 md:text-[clamp(3.5rem,6.2vw,5.25rem)]">
               <span className="block md:inline">{t.headlineStart}</span>{" "}
               <span className="block md:inline">{t.headlineMiddle}</span>
               <span className="block text-accent">{t.headlineAccent}</span>
@@ -73,7 +73,7 @@ export default function Hero() {
               {t.intro}
             </p>
 
-            <div className="reveal reveal-3 mt-8 sm:mt-10">
+            <div className="reveal reveal-3 mt-8 sm:mt-9">
               <ExpandableScreenTrigger>
                 <button
                   type="button"
@@ -94,7 +94,7 @@ export default function Hero() {
               </ExpandableScreenTrigger>
             </div>
 
-            <p className="reveal reveal-3 mt-8 me-[-0.35em] text-[0.8125rem] font-semibold tracking-[0.35em] text-foreground/90 uppercase sm:mt-10 sm:text-[0.9375rem]">
+            <p className="reveal reveal-3 mt-6 me-[-0.35em] text-[0.8125rem] font-semibold tracking-[0.35em] text-foreground/90 uppercase sm:mt-8 sm:text-[0.9375rem]">
               {t.comingSoon}
             </p>
           </main>

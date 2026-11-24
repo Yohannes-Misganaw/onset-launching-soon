@@ -5,6 +5,7 @@ import { getRequestIp, limiter } from "@/lib/rate-limit";
 import { isLanguageCode } from "@/lib/languages";
 import { isCountryCode, toE164Phone } from "@/lib/countries";
 import { sendWaitlistConfirmation } from "@/lib/waitlist-email";
+import { AUDIENCE_ROLES, INTERESTS, parseChoices } from "@/lib/survey";
 
 const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const MAX_EMAIL_LENGTH = 254;
@@ -68,6 +69,22 @@ export async function POST(request: NextRequest) {
     );
   }
 
+  const interests = parseChoices(fields.interests, INTERESTS);
+  if (!interests) {
+    return NextResponse.json(
+      { error: "Please select at least one thing you're interested in.", field: "interests" },
+      { status: 400 }
+    );
+  }
+
+  const roles = parseChoices(fields.roles, AUDIENCE_ROLES);
+  if (!roles) {
+    return NextResponse.json(
+      { error: "Please select at least one option that describes you.", field: "roles" },
+      { status: 400 }
+    );
+  }
+
   try {
     await db.insert(waitlist).values({
       name,
@@ -75,6 +92,8 @@ export async function POST(request: NextRequest) {
       phone,
       country: rawCountry,
       language: rawLanguage,
+      interests: interests.join(","),
+      roles: roles.join(","),
     });
     sendWaitlistConfirmation({ name, email, language: rawLanguage }).catch((error) => {
       console.error("Failed to send waitlist confirmation email", error);

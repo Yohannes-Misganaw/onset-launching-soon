@@ -22,7 +22,7 @@ Open <http://localhost:3000>.
 | Route             | Purpose                                                          |
 | ----------------- | ---------------------------------------------------------------- |
 | `/`               | Public launching-soon page                                       |
-| `POST /api/submit`| Adds `{ name, email, phone, country, language }` (5/min per IP)  |
+| `POST /api/submit`| Adds `{ name, email, phone, country, language, interests, roles }` (5/min per IP) |
 | `/waitlist-lists` | Password-protected list of signups (`WAITLIST_ADMIN_PASSWORD`)   |
 
 ## Structure

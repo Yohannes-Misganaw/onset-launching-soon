@@ -5,6 +5,7 @@ import { desc } from "drizzle-orm";
 import { db } from "@/lib/db";
 import { waitlist } from "@/lib/schema";
 import { getLanguageLabel } from "@/lib/languages";
+import { AUDIENCE_ROLE_LABELS, INTEREST_LABELS, storedChoiceLabels } from "@/lib/survey";
 
 const countryNames = new Intl.DisplayNames(["en"], { type: "region" });
 
@@ -56,6 +57,19 @@ function Logo({ className }: { className?: string }) {
       priority
       className={className}
     />
+  );
+}
+
+function ChoiceList({ labels }: { labels: string[] }) {
+  if (labels.length === 0) {
+    return <span className="text-muted-foreground">—</span>;
+  }
+  return (
+    <ul className="space-y-1">
+      {labels.map((label) => (
+        <li key={label}>{label}</li>
+      ))}
+    </ul>
   );
 }
 
@@ -143,6 +157,8 @@ export default async function WaitlistListsPage({
       phone: waitlist.phone,
       country: waitlist.country,
       language: waitlist.language,
+      interests: waitlist.interests,
+      roles: waitlist.roles,
       createdAt: waitlist.createdAt,
     })
     .from(waitlist)
@@ -195,7 +211,7 @@ export default async function WaitlistListsPage({
             </div>
           ) : (
             <div className="overflow-x-auto">
-              <table className="w-full min-w-240 border-collapse text-left">
+              <table className="w-full min-w-360 border-collapse text-left">
                 <caption className="sr-only">Onset launch waitlist entries</caption>
                 <thead>
                   <tr className="border-b bg-muted/45">
@@ -239,6 +255,18 @@ export default async function WaitlistListsPage({
                       scope="col"
                       className="px-5 py-3.5 text-xs font-semibold tracking-wider text-muted-foreground uppercase"
                     >
+                      Interested in
+                    </th>
+                    <th
+                      scope="col"
+                      className="px-5 py-3.5 text-xs font-semibold tracking-wider text-muted-foreground uppercase"
+                    >
+                      Describes them
+                    </th>
+                    <th
+                      scope="col"
+                      className="px-5 py-3.5 text-xs font-semibold tracking-wider text-muted-foreground uppercase"
+                    >
                       Joined
                     </th>
                   </tr>
@@ -277,6 +305,12 @@ export default async function WaitlistListsPage({
                       </td>
                       <td className="px-5 py-4 text-sm whitespace-nowrap" lang={entry.language}>
                         {getLanguageLabel(entry.language)}
+                      </td>
+                      <td className="min-w-56 px-5 py-4 text-sm">
+                        <ChoiceList labels={storedChoiceLabels(entry.interests, INTEREST_LABELS)} />
+                      </td>
+                      <td className="min-w-56 px-5 py-4 text-sm">
+                        <ChoiceList labels={storedChoiceLabels(entry.roles, AUDIENCE_ROLE_LABELS)} />
                       </td>
                       <td className="px-5 py-4 text-sm whitespace-nowrap text-muted-foreground">
                         {dateFormatter.format(entry.createdAt)}

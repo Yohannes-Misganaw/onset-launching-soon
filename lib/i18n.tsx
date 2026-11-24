@@ -2,6 +2,7 @@
 
 import { useEffect, useSyncExternalStore } from "react";
 import { getLanguage, isLanguageCode, type LanguageCode } from "@/lib/languages";
+import type { AudienceRole, Interest } from "@/lib/survey";
 
 export { LANGUAGES, type LanguageCode } from "@/lib/languages";
 
@@ -24,6 +25,14 @@ export interface Translation {
   country: string;
   searchCountry: string;
   noCountries: string;
+  interestsLabel: string;
+  interests: Record<Interest, string>;
+  rolesLabel: string;
+  selectAll: string;
+  stepOf: string;
+  continueCta: string;
+  backCta: string;
+  roles: Record<AudienceRole, string>;
   submitting: string;
   successTitle: string;
   alreadyTitle: string;
@@ -37,6 +46,8 @@ export interface Translation {
   errEmailInvalid: string;
   errPhoneRequired: string;
   errPhoneInvalid: string;
+  errInterestsRequired: string;
+  errRolesRequired: string;
   errRateLimit: string;
   errGeneric: string;
   errNetwork: string;
@@ -62,6 +73,30 @@ const TRANSLATIONS: Record<LanguageCode, Translation> = {
     country: "Country",
     searchCountry: "Search country or code",
     noCountries: "No countries found",
+    interestsLabel: "What are you interested in doing on Onset.et?",
+    interests: {
+      rent_out_equipment: "Rent out my equipment",
+      rent_equipment: "Rent equipment from others",
+      buy_sell_equipment: "Buy or sell filmmaking equipment",
+      find_jobs: "Find film production jobs",
+      find_crew: "Find crew members for my productions",
+      locations: "List or find filming locations",
+      other: "Other",
+    },
+    rolesLabel: "Which best describes you?",
+    selectAll: "Select all that apply.",
+    stepOf: "Step {current} of {total}",
+    continueCta: "Continue",
+    backCta: "Back",
+    roles: {
+      filmmaker: "Individual filmmaker or creative professional",
+      equipment_owner: "Equipment owner",
+      rental_house: "Equipment rental house or rental business",
+      production_company: "Film or production company",
+      crew: "Crew member or freelancer",
+      location_owner: "Location owner or representative",
+      other: "Other",
+    },
     submitting: "Joining...",
     successTitle: "You're on the list.",
     alreadyTitle: "You're already on the list.",
@@ -75,6 +110,8 @@ const TRANSLATIONS: Record<LanguageCode, Translation> = {
     errEmailInvalid: "Please enter a valid email address",
     errPhoneRequired: "Phone number is required",
     errPhoneInvalid: "Please enter a valid phone number for the selected country",
+    errInterestsRequired: "Please select at least one thing you're interested in",
+    errRolesRequired: "Please select at least one option that describes you",
     errRateLimit: "Too many attempts. Please try again in a minute.",
     errGeneric: "Something went wrong. Please try again.",
     errNetwork: "Network error. Check your connection and try again.",
@@ -98,6 +135,30 @@ const TRANSLATIONS: Record<LanguageCode, Translation> = {
     country: "አገር",
     searchCountry: "አገር ወይም ኮድ ይፈልጉ",
     noCountries: "ምንም አገር አልተገኘም",
+    interestsLabel: "በOnset.et ላይ ምን ማድረግ ይፈልጋሉ?",
+    interests: {
+      rent_out_equipment: "መሣሪያዬን ማከራየት",
+      rent_equipment: "ከሌሎች መሣሪያ መከራየት",
+      buy_sell_equipment: "የፊልም መሣሪያዎችን መግዛት ወይም መሸጥ",
+      find_jobs: "የፊልም ፕሮዳክሽን ሥራዎችን ማግኘት",
+      find_crew: "ለፕሮዳክሽኖቼ የቀረጻ ቡድን አባላትን ማግኘት",
+      locations: "የቀረጻ ቦታዎችን መመዝገብ ወይም ማግኘት",
+      other: "ሌላ",
+    },
+    rolesLabel: "እርስዎን በተሻለ የሚገልጸው የትኛው ነው?",
+    selectAll: "የሚመለከቱዎትን ሁሉ ይምረጡ።",
+    stepOf: "ደረጃ {current} ከ {total}",
+    continueCta: "ቀጥል",
+    backCta: "ተመለስ",
+    roles: {
+      filmmaker: "ግለሰብ ፊልም ሰሪ ወይም የፈጠራ ባለሙያ",
+      equipment_owner: "የመሣሪያ ባለቤት",
+      rental_house: "የመሣሪያ ኪራይ ድርጅት ወይም ንግድ",
+      production_company: "የፊልም ወይም የፕሮዳክሽን ኩባንያ",
+      crew: "የቀረጻ ቡድን አባል ወይም ፍሪላንሰር",
+      location_owner: "የቀረጻ ቦታ ባለቤት ወይም ተወካይ",
+      other: "ሌላ",
+    },
     submitting: "በመላክ ላይ...",
     successTitle: "ተመዝግበዋል",
     alreadyTitle: "ቀድመው ተመዝግበዋል",
@@ -111,6 +172,8 @@ const TRANSLATIONS: Record<LanguageCode, Translation> = {
     errEmailInvalid: "እባክዎ ትክክለኛ ኢሜይል ያስገቡ",
     errPhoneRequired: "ስልክ ቁጥር ያስፈልጋል",
     errPhoneInvalid: "እባክዎ ለተመረጠው አገር ትክክለኛ ስልክ ቁጥር ያስገቡ",
+    errInterestsRequired: "እባክዎ የሚፈልጉትን ቢያንስ አንድ ነገር ይምረጡ",
+    errRolesRequired: "እባክዎ እርስዎን የሚገልጽ ቢያንስ አንድ አማራጭ ይምረጡ",
     errRateLimit: "በጣም ብዙ ሙከራዎች። እባክዎ ከአንድ ደቂቃ በኋላ ይሞክሩ።",
     errGeneric: "የሆነ ችግር ተፈጥሯል። እባክዎ እንደገና ይሞክሩ።",
     errNetwork: "የኔትወርክ ችግር። ግንኙነትዎን አረጋግጠው እንደገና ይሞክሩ።",
