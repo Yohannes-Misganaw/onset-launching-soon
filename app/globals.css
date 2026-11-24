@@ -1,0 +1,311 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+  --radius-2xl: calc(var(--radius) + 8px);
+
+  --font-inter: var(--font-inter), system-ui, sans-serif;
+  --font-satoshi: var(--font-satoshi), var(--font-inter), system-ui, sans-serif;
+}
+
+:root {
+  --radius: 1rem;
+  --gutter: clamp(1.5rem, 6vw, 7.5rem);
+  --background: #08271e;
+  --foreground: #f9f2e0;
+  --card: #0c2118;
+  --card-foreground: #f9f2e0;
+  --popover: #0c2118;
+  --popover-foreground: #f9f2e0;
+  --primary: #f9f2e0;
+  --primary-foreground: #0c2118;
+  --secondary: #123528;
+  --secondary-foreground: #f9f2e0;
+  --muted: #123528;
+  --muted-foreground: #ced6c7;
+  --accent: #b9d39a;
+  --accent-foreground: #0c2118;
+  --destructive: #ffbcab;
+  --border: #f9f2e02e;
+  --input: #f9f2e040;
+  --ring: #b9d39a;
+}
+
+@media (max-width: 360px) {
+  :root {
+    --gutter: 1.125rem;
+  }
+}
+
+.lang-ethiopic,
+.lang-ethiopic .font-satoshi,
+.lang-ethiopic .font-inter {
+  font-family: var(--font-ethiopic), system-ui, sans-serif;
+}
+
+.lang-ethiopic,
+.lang-ethiopic * {
+  letter-spacing: normal !important;
+}
+
+.lang-ethiopic .font-satoshi {
+  font-weight: 800;
+  line-height: 1.05;
+}
+
+.lang-ethiopic .hero-headline {
+  font-size: clamp(2.5rem, 10vw, 3.25rem);
+  line-height: 1.12;
+}
+
+@media (min-width: 768px) {
+  .lang-ethiopic .hero-headline {
+    font-size: clamp(2.75rem, 4.6vw, 4rem);
+  }
+}
+
+.hero-scene {
+  position: absolute;
+  z-index: -1;
+  inset: 0;
+  pointer-events: none;
+  background-color: var(--background);
+  background-image: url("/bg/onset-portrait.jpg");
+  background-image: image-set(
+    url("/bg/onset-portrait.webp") type("image/webp"),
+    url("/bg/onset-portrait.jpg") type("image/jpeg")
+  );
+  background-size: cover;
+  background-position: center bottom;
+  background-repeat: no-repeat;
+}
+
+.hero-scene::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse 70% 55% at 50% 45%, #04140f59 0%, #04140f00 70%);
+}
+
+@media (min-width: 701px) and (min-aspect-ratio: 1/1) {
+  .hero-scene {
+    background-image: url("/bg/onset-landscape.jpg");
+    background-image: image-set(
+      url("/bg/onset-landscape.webp") type("image/webp"),
+      url("/bg/onset-landscape.jpg") type("image/jpeg")
+    );
+    background-position: center;
+  }
+}
+
+.film-screen {
+  background-color: #04140f;
+  isolation: isolate;
+  overflow-x: clip;
+  overflow-y: auto;
+}
+
+.film-grain {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.film-glow {
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(ellipse 80% 70% at 40% 70%, #123b2a 0%, #123b2a00 70%),
+    linear-gradient(200deg, #0d2f22 0%, #04140f 70%);
+}
+
+.film-beam {
+  position: absolute;
+  inset: 0;
+  mix-blend-mode: screen;
+  -webkit-mask-image: radial-gradient(circle at 100% 0%, #000 0%, #000 25%, transparent 92%);
+  mask-image: radial-gradient(circle at 100% 0%, #000 0%, #000 25%, transparent 92%);
+}
+
+.film-beam-wide {
+  background: conic-gradient(
+    from 196deg at 97% 3%,
+    #e8b86a00 0deg,
+    #e8b86a2e 14deg,
+    #e8b86a4d 28deg,
+    #e8b86a2e 42deg,
+    #e8b86a00 58deg
+  );
+  filter: blur(36px);
+}
+
+.film-beam-core {
+  background: conic-gradient(
+    from 211deg at 97% 3%,
+    #f6d79a00 0deg,
+    #f6d79a52 10deg,
+    #f6d79a73 15deg,
+    #f6d79a52 20deg,
+    #f6d79a00 30deg
+  );
+  filter: blur(18px);
+}
+
+.film-pool {
+  position: absolute;
+  inset: 0;
+  mix-blend-mode: screen;
+  background: radial-gradient(ellipse 42% 20% at 38% 92%, #e8b86a2e 0%, #e8b86a00 70%);
+  filter: blur(10px);
+}
+
+.film-lamp {
+  position: absolute;
+  top: -11rem;
+  right: -11rem;
+  width: 28rem;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  mix-blend-mode: screen;
+  background: radial-gradient(
+    circle,
+    #fffaf0 0%,
+    #fff1d2 12%,
+    #f8dca0e6 21%,
+    #eebf6e80 34%,
+    #e3a95033 50%,
+    #e3a95000 70%
+  );
+}
+
+.film-vignette {
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(ellipse 50% 55% at 0% 0%, #020a07e6 0%, #020a0700 70%),
+    radial-gradient(ellipse 55% 50% at 100% 100%, #020a07d9 0%, #020a0700 70%),
+    radial-gradient(ellipse 45% 50% at 0% 100%, #020a07b3 0%, #020a0700 70%);
+}
+
+.film-mark {
+  --mark-size: min(88vh, 60vw);
+  position: absolute;
+  top: 50%;
+  right: calc(var(--mark-size) * -0.3);
+  width: var(--mark-size);
+  aspect-ratio: 1;
+  transform: translateY(-50%) rotate(-8deg);
+  filter: drop-shadow(0 40px 60px #020a0773);
+}
+
+.film-mark-glass {
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(circle at 30% 22%, #f9f2e03d, transparent 55%),
+    linear-gradient(135deg, #f9f2e01f, #b9d39a0a 55%, #04140f33);
+  -webkit-backdrop-filter: blur(22px) saturate(150%) brightness(1.12);
+  backdrop-filter: blur(22px) saturate(150%) brightness(1.12);
+  -webkit-mask: url("/onset-mark.svg") center / contain no-repeat;
+  mask: url("/onset-mark.svg") center / contain no-repeat;
+}
+
+.film-mark-edge {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+
+.film-mark-edge path {
+  stroke-width: 1.5px;
+}
+
+.film-noise {
+  position: absolute;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-size: 180px 180px;
+  mix-blend-mode: overlay;
+  opacity: 0.42;
+}
+
+@media (max-width: 700px) {
+  .film-mark {
+    --mark-size: 125vw;
+    top: 18%;
+    opacity: 0.75;
+  }
+}
+
+@keyframes reveal {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 20px, 0);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.reveal {
+  animation: reveal 0.8s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.reveal-1 {
+  animation-delay: 0.1s;
+}
+
+.reveal-2 {
+  animation-delay: 0.2s;
+}
+
+.reveal-3 {
+  animation-delay: 0.35s;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .reveal {
+    animation: none;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+
+  html {
+    color-scheme: dark;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+  }
+}

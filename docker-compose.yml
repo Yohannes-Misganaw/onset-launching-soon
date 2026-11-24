@@ -1,0 +1,42 @@
+services:
+  mysql:
+    image: mysql:8.4
+    environment:
+      MYSQL_DATABASE: ${DB_NAME:-onset_launch}
+      MYSQL_USER: ${DB_USER:-onset}
+      MYSQL_PASSWORD: ${DB_PASSWORD:-onset}
+      MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD:-onset-root}
+    volumes:
+      - mysql_data:/var/lib/mysql
+    ports:
+      - "127.0.0.1:23307:3306"
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "127.0.0.1", "-uroot", "-p${DB_ROOT_PASSWORD:-onset-root}"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+    restart: unless-stopped
+
+  app:
+    build: .
+    ports:
+      - "3000:3000"
+    environment:
+      DATABASE_URL: ${DATABASE_URL}
+      WAITLIST_ADMIN_PASSWORD: ${WAITLIST_ADMIN_PASSWORD}
+      NEXT_PUBLIC_SITE_URL: ${NEXT_PUBLIC_SITE_URL}
+      SMTP_HOST: ${SMTP_HOST}
+      SMTP_PORT: ${SMTP_PORT}
+      SMTP_USER: ${SMTP_USER}
+      SMTP_PASS: ${SMTP_PASS}
+      MAIL_FROM: ${MAIL_FROM}
+      MAIL_REPLY_TO: ${MAIL_REPLY_TO}
+      NODE_ENV: production
+    depends_on:
+      mysql:
+        condition: service_healthy
+    restart: unless-stopped
+    profiles: ["app"]
+
+volumes:
+  mysql_data:

@@ -1,0 +1,86 @@
+name: Deploy
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+concurrency:
+  group: production-deploy
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      SITE_URL: https://onset.et
+    steps:
+      - name: Check out
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Typecheck
+        run: npm run typecheck
+
+      - name: Lint
+        run: npm run lint
+
+      - name: Configure SSH
+        env:
+          DEPLOY_SSH_KEY: ${{ secrets.DEPLOY_SSH_KEY }}
+          DEPLOY_KNOWN_HOSTS: ${{ secrets.DEPLOY_KNOWN_HOSTS }}
+          DEPLOY_HOST: ${{ secrets.DEPLOY_HOST }}
+          DEPLOY_USER: ${{ secrets.DEPLOY_USER }}
+        run: |
+          install -m 700 -d ~/.ssh
+          printf '%s\n' "$DEPLOY_SSH_KEY" > ~/.ssh/deploy_key
+          chmod 600 ~/.ssh/deploy_key
+          printf '%s\n' "$DEPLOY_KNOWN_HOSTS" > ~/.ssh/known_hosts
+          cat > ~/.ssh/deploy_config <<SSHCONFIG
+          Host deploy-target
+            HostName $DEPLOY_HOST
+            User $DEPLOY_USER
+            IdentityFile $HOME/.ssh/deploy_key
+            IdentitiesOnly yes
+            StrictHostKeyChecking yes
+            UserKnownHostsFile $HOME/.ssh/known_hosts
+            ServerAliveInterval 30
+          SSHCONFIG
+          ssh -F ~/.ssh/deploy_config deploy-target true
+
+      - name: Apply database migrations
+        env:
+          DATABASE_URL: ${{ secrets.MIGRATE_DATABASE_URL }}
+        run: |
+          ssh -F ~/.ssh/deploy_config -f -N -o ExitOnForwardFailure=yes -L 127.0.0.1:33306:127.0.0.1:3306 deploy-target
+          npx drizzle-kit migrate
+
+      - name: Build and deploy
+        env:
+          NEXT_PUBLIC_SITE_URL: ${{ env.SITE_URL }}
+          DEPLOY_SSH_HOST: deploy-target
+        run: DEPLOY_SSH_CONFIG="$HOME/.ssh/deploy_config" ./scripts/deploy-cpanel.sh
+
+      - name: Check the live site
+        run: |
+          for attempt in 1 2 3 4 5; do
+            if curl -fsS -o /dev/null "$SITE_URL/"; then
+              echo "$SITE_URL is up"
+              exit 0
+            fi
+            sleep 10
+          done
+          echo "$SITE_URL did not respond after deploy" >&2
+          exit 1

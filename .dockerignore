@@ -1,0 +1,13 @@
+.agents
+.claude
+.codex
+.git
+.gitignore
+.next
+node_modules
+
+.env*
+*.log
+*.tsbuildinfo
+coverage
+out
